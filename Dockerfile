@@ -35,6 +35,9 @@ RUN find . -name "*.py" -delete && \
     cp build_output/run*.so ./run.so && \
     rm -rf build_output
 
+# Set python to run in unbuffered mode to ensure logs flush immediately
+ENV PYTHONUNBUFFERED=1
+
 # Expose port yang digunakan Railway
 EXPOSE 8000
 

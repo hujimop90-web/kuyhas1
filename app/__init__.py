@@ -8,10 +8,14 @@ login_manager = LoginManager()
 
 
 def create_app():
-    app = Flask(__name__)
+    if os.path.exists('/app'):
+        app = Flask(__name__, template_folder='/app/app/templates', static_folder='/app/app/static')
+        default_db_path = '/app/cookies.db'
+    else:
+        app = Flask(__name__)
+        default_db_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'cookies.db')
+        
     app.config['SECRET_KEY'] = 'netflix-cookie-manager-secret-2024'
-    
-    default_db_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'cookies.db')
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', f'sqlite:///{default_db_path}')
         
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
