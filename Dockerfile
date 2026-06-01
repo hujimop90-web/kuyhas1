@@ -20,7 +20,7 @@ COPY . .
 ENV PYTHONUNBUFFERED=1
 
 # Expose port default
-EXPOSE 8000
+EXPOSE 5000
 
-# Jalankan menggunakan gunicorn dengan dynamic PORT atau fallback ke 8000
-CMD gunicorn --bind 0.0.0.0:${PORT:-8000} run:app --workers 2 --threads 4 --timeout 120
+# Jalankan menggunakan gunicorn dengan dynamic PORT atau fallback ke 5000
+CMD gunicorn --bind 0.0.0.0:${PORT:-5000} run:app --workers 1 --threads 4 --timeout 120
