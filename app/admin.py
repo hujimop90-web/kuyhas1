@@ -503,13 +503,11 @@ def progress_stream():
 def debug_checker():
     """Cek apakah modul checker berhasil di-import."""
     from .checker import CHECKER_AVAILABLE
-    if os.path.exists('/app'):
-        checker_dir = '/app/Netflix-Cookie-Checker-main'
-    else:
-        checker_dir = os.path.join(
-            os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-            'Netflix-Cookie-Checker-main'
-        )
+    import sys, os
+    checker_dir = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+        'Netflix-Cookie-Checker-main'
+    )
     main_exists = os.path.exists(os.path.join(checker_dir, 'main.py'))
     info = {
         'checker_available': CHECKER_AVAILABLE,
