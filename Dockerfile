@@ -40,4 +40,4 @@ EXPOSE 8000
 
 # Jalankan menggunakan gunicorn
 # Gunicorn akan secara otomatis mendeteksi run.so sebagai module 'run'
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "run:app", "--workers", "2", "--threads", "4", "--timeout", "120"]
+CMD gunicorn --bind 0.0.0.0:${PORT:-8000} run:app --workers 2 --threads 4 --timeout 120
