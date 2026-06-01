@@ -5,7 +5,7 @@
   <div>
     <h1 class="page-title">🗄️ Cookies Database</h1>
     <p class="page-subtitle">
-      <strong style="color:var(--red);">{{ pagination.total }}</strong> cookies tersimpan
+      <strong style="color:var(--red);">{{ pagination.total }}</strong> cookies stored
     </p>
   </div>
   <div class="flex gap-2" style="flex-wrap:wrap;">
@@ -16,12 +16,12 @@
     <button class="btn btn-sm" id="btnDedup"
             style="background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;border:none;"
             onclick="openDedupModal()">
-      🧹 Hapus Duplikat
+      🧹 Delete Duplicates
     </button>
     <form method="POST" action="{{ url_for('admin.recheck_all') }}" onsubmit="return confirm('Recheck all cookies? Invalid/expired cookies will be deleted.')">
       <button class="btn btn-sm" style="background:#f59e0b;color:#000;border:none;">🔄 Recheck</button>
     </form>
-    <form method="POST" action="{{ url_for('admin.delete_all') }}" onsubmit="return confirm('⚠️ Hapus SEMUA cookies dari database? Tindakan ini tidak bisa dibatalkan!')">
+    <form method="POST" action="{{ url_for('admin.delete_all') }}" onsubmit="return confirm('⚠️ Delete ALL cookies from the database? This action cannot be undone!')">
       <button class="btn btn-danger btn-sm">🧨 Delete All</button>
     </form>
     <a href="{{ url_for('admin.check') }}" class="btn btn-primary btn-sm">🔍 New Check</a>
@@ -35,8 +35,8 @@
     <!-- Modal header -->
     <div style="padding:24px 24px 0;display:flex;align-items:center;justify-content:space-between;">
       <div>
-        <h3 style="font-size:18px;font-weight:800;color:var(--text);margin-bottom:4px;">🧹 Hapus Duplikat Cookies</h3>
-        <p style="font-size:13px;color:var(--text-muted);">Analisis database untuk menemukan entri ganda</p>
+        <h3 style="font-size:18px;font-weight:800;color:var(--text);margin-bottom:4px;">🧹 Delete Duplicate Cookies</h3>
+        <p style="font-size:13px;color:var(--text-muted);">Analyze database to find duplicate entries</p>
       </div>
       <button onclick="closeDedupModal()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:22px;line-height:1;padding:4px;">×</button>
     </div>
@@ -44,7 +44,7 @@
     <!-- Modal body: loading state -->
     <div id="dedupLoading" style="padding:40px 24px;text-align:center;">
       <div class="spinner" style="margin:0 auto 16px;"></div>
-      <p style="color:var(--text-muted);font-size:14px;">Menganalisis database...</p>
+      <p style="color:var(--text-muted);font-size:14px;">Analyzing database...</p>
     </div>
 
     <!-- Modal body: stats -->
@@ -54,15 +54,15 @@
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;text-align:center;">
           <div>
             <p id="statTotal" style="font-size:22px;font-weight:900;color:var(--text);">—</p>
-            <p style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.8px;">Total Saat Ini</p>
+            <p style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.8px;">Current Total</p>
           </div>
           <div>
             <p id="statDelete" style="font-size:22px;font-weight:900;color:#ef4444;">—</p>
-            <p style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.8px;">Akan Dihapus</p>
+            <p style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.8px;">To Delete</p>
           </div>
           <div>
             <p id="statAfter" style="font-size:22px;font-weight:900;color:#22c55e;">—</p>
-            <p style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.8px;">Setelah Bersih</p>
+            <p style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.8px;">After Clean</p>
           </div>
         </div>
       </div>
@@ -71,8 +71,8 @@
       <div style="margin-bottom:16px;">
         <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;">
           <div>
-            <p style="font-size:13px;font-weight:600;color:var(--text);">📄 Duplikat berdasarkan Isi Cookie</p>
-            <p style="font-size:12px;color:var(--text-muted);" id="descText">— grup duplikat ditemukan</p>
+            <p style="font-size:13px;font-weight:600;color:var(--text);">📄 Duplicate by Cookie Content</p>
+            <p style="font-size:12px;color:var(--text-muted);" id="descText">— duplicate groups found</p>
           </div>
           <span id="statDupText" style="font-size:18px;font-weight:800;color:#f59e0b;">—</span>
         </div>
@@ -81,15 +81,15 @@
       <!-- No duplicates state -->
       <div id="noDuplicates" style="display:none;text-align:center;padding:16px 0 8px;">
         <div style="font-size:40px;margin-bottom:10px;">✅</div>
-        <p style="font-weight:700;color:var(--text);font-size:15px;">Tidak ada duplikat!</p>
-        <p style="font-size:13px;color:var(--text-muted);">Database sudah bersih.</p>
+        <p style="font-weight:700;color:var(--text);font-size:15px;">No duplicates!</p>
+        <p style="font-size:13px;color:var(--text-muted);">Database is clean.</p>
       </div>
 
       <!-- Action info -->
       <div id="dedupActionInfo" style="background:var(--red-dim);border:1px solid rgba(229,9,20,0.2);border-radius:var(--radius-sm);padding:12px;font-size:12px;color:var(--text-muted);line-height:1.6;margin-bottom:16px;">
-        <strong style="color:var(--red);">ℹ️ Strategi:</strong>
-        Untuk setiap grup duplikat, entri <strong>terbaru</strong> (ID tertinggi) akan dipertahankan.
-        Entri lama akan dihapus permanen.
+        <strong style="color:var(--red);">ℹ️ Strategy:</strong>
+        For each duplicate group, the <strong>newest</strong> entry (highest ID) will be kept.
+        Old entries will be permanently deleted.
       </div>
     </div>
 
@@ -98,10 +98,10 @@
       <form method="POST" action="{{ url_for('admin.delete_duplicates') }}" id="dedupForm">
         <button type="submit" id="btnConfirmDedup" class="btn btn-danger btn-full"
                 style="background:linear-gradient(135deg,#7c3aed,#5b21b6);border:none;justify-content:center;padding:13px;">
-          🧹 Konfirmasi Hapus Duplikat
+          🧹 Confirm Delete Duplicates
         </button>
       </form>
-      <button onclick="closeDedupModal()" class="btn btn-secondary btn-full" style="justify-content:center;">Batal</button>
+      <button onclick="closeDedupModal()" class="btn btn-secondary btn-full" style="justify-content:center;">Cancel</button>
     </div>
   </div>
 </div>
@@ -227,7 +227,7 @@ function openDedupModal() {
       document.getElementById('statDelete').textContent = (d.will_delete ?? 0).toLocaleString();
       document.getElementById('statAfter').textContent = (d.after_clean ?? 0).toLocaleString();
       document.getElementById('statDupText').textContent = d.dup_text ?? 0;
-      document.getElementById('descText').textContent = `${d.dup_text_groups ?? 0} grup duplikat ditemukan`;
+      document.getElementById('descText').textContent = `${d.dup_text_groups ?? 0} duplicate groups found`;
 
       if ((d.will_delete ?? 0) === 0) {
         document.getElementById('noDuplicates').style.display = 'block';
@@ -238,7 +238,7 @@ function openDedupModal() {
     })
     .catch(e => {
       document.getElementById('dedupLoading').innerHTML =
-        `<p style="color:#ef4444;padding:20px;text-align:center;">❌ Gagal: ${e.message}</p>`;
+        `<p style="color:#ef4444;padding:20px;text-align:center;">❌ Failed: ${e.message}</p>`;
     });
 }
 
@@ -249,7 +249,7 @@ function closeDedupModal() {
 // Konfirmasi sebelum submit dedup
 document.getElementById('dedupForm')?.addEventListener('submit', function(e) {
   const will = document.getElementById('statDelete').textContent;
-  if (!confirm(`Hapus ${will} duplikat permanen? Tindakan ini tidak bisa dibatalkan.`)) {
+  if (!confirm(`Permanently delete ${will} duplicates? This action cannot be undone.`)) {
     e.preventDefault();
   }
 });

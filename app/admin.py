@@ -476,7 +476,7 @@ def api_cancel():
     with job_lock:
         current_job_id += 1
     cancel_checking()
-    return jsonify({"status": "cancelled", "message": "Proses pengecekan dihentikan."})
+    return jsonify({"status": "cancelled", "message": "Checking process stopped."})
 
 
 @admin_bp.route('/progress-stream')
@@ -650,13 +650,13 @@ def delete_duplicates():
             db.session.commit()
 
         flash(
-            f'✅ Berhasil menghapus {deleted_total} cookies dengan isi duplikat.',
+            f'✅ Successfully deleted {deleted_total} duplicate cookies.',
             'success'
         )
 
     except Exception as e:
         db.session.rollback()
-        flash(f'❌ Gagal menghapus duplikat: {e}', 'danger')
+        flash(f'❌ Failed to delete duplicates: {e}', 'danger')
 
     return redirect(url_for('admin.results'))
 
@@ -786,7 +786,7 @@ def update_user_limit(user_id):
         if new_limit is not None:
             new_limit = int(new_limit)
             if new_limit < 0:
-                flash('Batas klaim harian tidak boleh negatif.', 'danger')
+                flash('Daily claim limit cannot be negative.', 'danger')
             else:
                 user.max_daily_claims = new_limit
 
@@ -795,17 +795,17 @@ def update_user_limit(user_id):
         if new_total is not None:
             new_total = int(new_total)
             if new_total < 0:
-                flash('Kuota total klaim tidak boleh negatif.', 'danger')
+                flash('Total claims quota cannot be negative.', 'danger')
             else:
                 user.total_claims_left = new_total
 
         db.session.commit()
-        flash(f'Batas klaim dan kuota untuk "{user.username}" berhasil diperbarui.', 'success')
+        flash(f'Claim limits and quota for "{user.username}" successfully updated.', 'success')
     except ValueError:
-        flash('Batas klaim dan kuota harus berupa angka.', 'danger')
+        flash('Claim limits and quota must be numbers.', 'danger')
     except Exception as e:
         db.session.rollback()
-        flash(f'Gagal memperbarui batas/kuota: {e}', 'danger')
+        flash(f'Failed to update limits/quota: {e}', 'danger')
     return redirect(url_for('admin.users'))
 
 

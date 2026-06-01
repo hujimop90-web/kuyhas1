@@ -50,7 +50,7 @@ def create_app():
 
     login_manager.init_app(app)
     login_manager.login_view = 'auth.login'
-    login_manager.login_message = 'Silakan login untuk mengakses halaman ini.'
+    login_manager.login_message = 'Please log in to access this page.'
     login_manager.login_message_category = 'warning'
 
     from .models import User
@@ -85,7 +85,7 @@ def create_app():
             if db_token and flask_token and db_token != flask_token:
                 logout_user()
                 session.clear()
-                flash('Sesi Anda telah berakhir karena akun ini telah login di perangkat lain.', 'warning')
+                flash('Your session has ended because this account logged in on another device.', 'warning')
                 return redirect(url_for('auth.login'))
                 
             # 2. Update Aktivitas Terakhir (maksimal 1x per 60 detik)

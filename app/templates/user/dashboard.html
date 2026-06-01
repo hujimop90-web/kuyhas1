@@ -10,7 +10,7 @@
   <div>
     <div class="badge badge-live" style="margin-bottom:10px;">Live — Updated Daily</div>
     <h1 class="page-title">
-      Selamat datang, <span style="color:var(--red);">{{ current_user.username }}</span>
+      Welcome, <span style="color:var(--red);">{{ current_user.username }}</span>
     </h1>
     <p class="page-subtitle">
       {% set service_colors = {
@@ -60,7 +60,7 @@
   {% else %}
   <div class="empty-state">
     <div class="empty-icon">📦</div>
-    <p>Belum ada akun tersedia untuk layanan ini.</p>
+    <p>No accounts available for this service yet.</p>
   </div>
   {% endfor %}
 </div>
@@ -74,12 +74,12 @@
      class="country-card">
     <div class="flag">{{ c.flag }}</div>
     <div class="code">{{ c.name }}</div>
-    <div class="count" style="color:var(--text-muted);font-weight:500;">Pilih →</div>
+    <div class="count" style="color:var(--text-muted);font-weight:500;">Select →</div>
   </a>
   {% else %}
   <div class="empty-state">
     <div class="empty-icon">🌍</div>
-    <p>Belum ada data negara.</p>
+    <p>No country data available yet.</p>
   </div>
   {% endfor %}
 </div>
@@ -88,7 +88,7 @@
 {# Layanan non-negara: Spotify, Udemy, Claude, GOG, Crunchyroll #}
 {# Tampilkan region (UNKNOWN, dll) tanpa bendera besar #}
 {% if countries %}
-<div class="section-label">Pilih Region</div>
+<div class="section-label">Select Region</div>
 <div class="grid-auto">
   {% for c in countries %}
   <a href="{{ url_for('user.country_view', country_code=c.code, service=current_service) }}"
@@ -96,7 +96,7 @@
     {# Tidak tampilkan bendera besar untuk layanan global #}
     <div style="font-size:28px;margin-bottom:8px;opacity:0.6;">🌐</div>
     <div class="code">{{ c.name }}</div>
-    <div class="count" style="color:var(--text-muted);font-weight:500;">Pilih →</div>
+    <div class="count" style="color:var(--text-muted);font-weight:500;">Select →</div>
   </a>
   {% endfor %}
 </div>

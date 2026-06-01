@@ -45,9 +45,9 @@
 {# ── Tidak ada akun ── #}
 <div class="card" style="text-align:center;padding:60px 20px;">
   <div style="font-size:52px;margin-bottom:16px;">📭</div>
-  <p style="color:var(--text-muted);font-size:15px;margin-bottom:4px;">Tidak ada akun tersedia untuk filter ini.</p>
-  <p style="color:var(--text-dim);font-size:13px;margin-bottom:20px;">Coba pilih plan atau negara yang lain.</p>
-  <a href="{{ url_for('user.dashboard', service=current_service) }}" class="btn btn-primary">← Kembali ke Dashboard</a>
+  <p style="color:var(--text-muted);font-size:15px;margin-bottom:4px;">No accounts available for this filter.</p>
+  <p style="color:var(--text-dim);font-size:13px;margin-bottom:20px;">Try selecting a different plan or country/region.</p>
+  <a href="{{ url_for('user.dashboard', service=current_service) }}" class="btn btn-primary">← Back to Dashboard</a>
 </div>
 
 {% else %}
@@ -69,19 +69,19 @@
             {% if current_service == 'netflix' %}🔑{% else %}🍪{% endif %}
           </div>
           <h2 style="font-size:20px;font-weight:800;margin-bottom:8px;">
-            {% if current_service == 'netflix' %}Generate NFToken{% else %}Ambil Raw Cookies{% endif %}
+            {% if current_service == 'netflix' %}Generate NFToken{% else %}Get Raw Cookies{% endif %}
           </h2>
           <p style="font-size:13px;color:var(--text-muted);margin-bottom:20px;line-height:1.6;">
             {% if current_service == 'netflix' %}
-              Token login satu klik untuk Netflix. Token berlaku 10 menit dan tidak disimpan.
+              One-click login token for Netflix. Token is valid for 10 minutes and not stored.
             {% else %}
-              Raw cookies untuk login via Cookie-Editor atau Console Script.
+              Raw cookies for login via Cookie-Editor or Console Script.
             {% endif %}
           </p>
 
           {# Indikator Limit Klaim Harian #}
           <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);padding:10px 14px;border-radius:var(--radius-sm);margin-bottom:24px;font-size:13px;display:flex;align-items:center;justify-content:center;gap:8px;">
-            <span>📅 Kuota Klaim Hari Ini:</span>
+            <span>📅 Claims Quota Today:</span>
             <strong id="dailyClaimsText" style="color: {% if daily_claims_count >= max_daily_claims %}var(--red, #ff4a4a){% else %}#4CAF50{% endif %};">
               {{ daily_claims_count }} / {{ max_daily_claims }}
             </strong>
@@ -94,9 +94,9 @@
             </svg>
             <span id="btnStartGenText">
               {% if daily_claims_count >= max_daily_claims %}
-                🔒 Batas Limit Harian Tercapai
+                🔒 Daily Limit Reached
               {% else %}
-                {% if current_service == 'netflix' %}Generate Token Sekarang{% else %}Tampilkan Cookies{% endif %}
+                {% if current_service == 'netflix' %}Generate Token Now{% else %}Show Cookies{% endif %}
               {% endif %}
             </span>
           </button>
@@ -118,7 +118,7 @@
           <div id="cdBar" class="progress-bar" style="width:0%;background:linear-gradient(90deg,var(--red),#ff6b6b);transition:none;"></div>
         </div>
         <p style="font-size:42px;font-weight:900;color:var(--red);letter-spacing:-2px;line-height:1;" id="cdNumber">15</p>
-        <p style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-top:4px;">detik tersisa</p>
+        <p style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-top:4px;">seconds remaining</p>
       </div>
 
       {# ── STEP 3: Hasil (Netflix = token, lainnya = cookies) ── #}
@@ -131,7 +131,7 @@
             <div style="font-size:36px;margin-bottom:8px;">✅</div>
             <p style="font-weight:800;font-size:16px;margin-bottom:4px;">Token Generated!</p>
             <p style="font-size:12px;color:var(--text-muted);">
-              Berlaku hingga: <span id="tokenExpiry" style="color:var(--warning);font-weight:700;"></span>
+              Expires at: <span id="tokenExpiry" style="color:var(--warning);font-weight:700;"></span>
             </p>
           </div>
           <div class="token-box">
@@ -152,8 +152,8 @@
               <span style="margin-left:auto;color:var(--red);font-size:18px;">→</span>
             </a>
             <div class="flex gap-2 mt-3">
-              <button onclick="copyText(document.getElementById('pcUrl').textContent,'✅ PC URL disalin!')" class="copy-btn">📋 Copy PC</button>
-              <button onclick="copyText(document.getElementById('mobileUrl').textContent,'✅ Mobile URL disalin!')" class="copy-btn">📋 Copy Mobile</button>
+              <button onclick="copyText(document.getElementById('pcUrl').textContent,'✅ PC URL copied!')" class="copy-btn">📋 Copy PC</button>
+              <button onclick="copyText(document.getElementById('mobileUrl').textContent,'✅ Mobile URL copied!')" class="copy-btn">📋 Copy Mobile</button>
             </div>
           </div>
         </div>
@@ -161,7 +161,7 @@
         <div id="tokenErr" class="alert alert-danger" style="display:none;margin:0;"></div>
 
         <button onclick="retryGen()" id="btnRetry" class="btn btn-secondary btn-full mt-3" style="display:none;">
-          🔄 Generate Ulang
+          🔄 Regenerate
         </button>
 
         {% else %}
@@ -180,7 +180,7 @@
           {# Petunjuk console script #}
           <div style="background:var(--red-dim);border-left:3px solid var(--red);padding:12px;border-radius:var(--radius-sm);margin-top:14px;font-size:12px;color:var(--text-muted);line-height:1.6;">
             <strong style="color:var(--red);">⚡ Console Script:</strong>
-            Buka
+            Open
             <strong style="color:#fff;">
               {% if current_service == 'spotify' %}open.spotify.com
               {% elif current_service == 'udemy' %}udemy.com
@@ -189,7 +189,7 @@
               {% elif current_service == 'gog' %}gog.com
               {% else %}primevideo.com{% endif %}
             </strong>
-            → tekan <strong>F12</strong> → <strong>Console</strong> → paste → Enter
+            → press <strong>F12</strong> → <strong>Console</strong> → paste → Enter
           </div>
         </div>
         {% endif %}
@@ -203,11 +203,11 @@
     <div class="card mt-3">
       <div class="card-title" style="font-size:14px;">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        Cara Login dengan Cookie-Editor
+        How to Login with Cookie-Editor
       </div>
       <ol style="padding-left:18px;font-size:13px;color:var(--text-muted);line-height:2.2;">
-        <li>Install ekstensi <strong style="color:var(--text);">Cookie-Editor</strong> di browser</li>
-        <li>Buka <strong style="color:#fff;">
+        <li>Install the <strong style="color:var(--text);">Cookie-Editor</strong> extension in your browser</li>
+        <li>Open <strong style="color:#fff;">
           {% if current_service == 'spotify' %}open.spotify.com
           {% elif current_service == 'udemy' %}udemy.com
           {% elif current_service == 'crunchyroll' %}crunchyroll.com
@@ -215,9 +215,9 @@
           {% elif current_service == 'gog' %}gog.com
           {% else %}primevideo.com{% endif %}
         </strong></li>
-        <li>Klik ekstensi → <strong>🗑️ Delete All</strong></li>
-        <li>Klik <strong>⬇️ Import</strong> → paste cookies → <strong>Import</strong></li>
-        <li>Refresh halaman 🎉</li>
+        <li>Click the extension → <strong>🗑️ Delete All</strong></li>
+        <li>Click <strong>⬇️ Import</strong> → paste cookies → <strong>Import</strong></li>
+        <li>Refresh the page 🎉</li>
       </ol>
     </div>
     {% endif %}
@@ -232,9 +232,9 @@
       <div class="info-lock-overlay" id="infoLockOverlay">
         <div style="text-align:center;">
           <div style="font-size:36px;margin-bottom:10px;">🔒</div>
-          <p style="font-weight:700;font-size:14px;margin-bottom:6px;">Informasi Terkunci</p>
+          <p style="font-weight:700;font-size:14px;margin-bottom:6px;">Information Locked</p>
           <p style="font-size:12px;color:var(--text-muted);line-height:1.6;">
-            Selesaikan generate untuk melihat detail akun
+            Complete generation to view account details
           </p>
         </div>
       </div>
@@ -242,7 +242,7 @@
       {# Konten info akun #}
       <div class="card-title">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        Detail Akun
+        Account Details
       </div>
 
       {% macro inforow(key, val) %}
@@ -378,11 +378,11 @@ function startGeneration() {
               document.getElementById('mobileUrl').textContent = data.mobile_url;
               document.getElementById('tokenOk').style.display = 'block';
             } else {
-              showTokenError(data.error || 'Gagal generate token');
+              showTokenError(data.error || 'Failed to generate token');
             }
           }).catch(e => showTokenError('Error: ' + e.message));
         } else {
-          showTokenError('Token promise tidak tersedia');
+          showTokenError('Token promise not available');
         }
       } else {
         // Non-Netflix: tampilkan raw cookies dari API response
@@ -422,7 +422,7 @@ function updateDailyClaimsUI(d) {
       btn.style.opacity = '0.4';
       btn.style.cursor = 'not-allowed';
       if (btnText) {
-        btnText.textContent = '🔒 Batas Limit Harian Tercapai';
+        btnText.textContent = '🔒 Daily Limit Reached';
       }
     }
   }
@@ -484,7 +484,7 @@ function unlockInfo() {
 // Copy raw cookies
 function copyRawCookies() {
   const text = document.getElementById('rawCookieBox')?.value || '';
-  copyText(text, '✅ Cookies disalin!');
+  copyText(text, '✅ Cookies copied!');
 }
 
 // Console script
@@ -502,7 +502,7 @@ function copyConsoleScript(service) {
   script += '}\nalert("Cookies injected!");\nlocation.reload();';
 
   const sites = { spotify:'open.spotify.com', udemy:'udemy.com', crunchyroll:'crunchyroll.com', claude:'claude.ai', gog:'gog.com', primevideo:'primevideo.com' };
-  copyText(script, `✅ Script disalin! Buka ${sites[service] || 'website'}, F12 > Console > paste`);
+  copyText(script, `✅ Script copied! Open ${sites[service] || 'website'}, F12 > Console > paste`);
 }
 
 function parseNetscape(text) {

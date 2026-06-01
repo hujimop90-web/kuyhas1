@@ -298,7 +298,7 @@ def api_country_data(country_code):
 
     if daily_claims_count >= limit:
         return jsonify({
-            'error': f'Batas limit harian ({limit} cookie) telah tercapai. Silakan coba lagi besok.'
+            'error': f'Daily limit ({limit} cookies) reached. Please try again tomorrow.'
         }), 403
 
     # Verifikasi kuota total klaim
@@ -307,7 +307,7 @@ def api_country_data(country_code):
         total_left = 20
     if total_left <= 0:
         return jsonify({
-            'error': 'Kuota total klaim Anda telah habis. Silakan hubungi Admin untuk melakukan isi ulang.'
+            'error': 'Your total claims quota has run out. Please contact the Admin to reload.'
         }), 403
 
     # Build base query
@@ -322,9 +322,8 @@ def api_country_data(country_code):
     if plan_filter:
         base_query = base_query.filter(CookieResult.plan_key == plan_filter)
 
-    total = base_query.count()
     if total == 0:
-        return jsonify({'error': 'Tidak ada cookies tersedia untuk pilihan ini.'}), 404
+        return jsonify({'error': 'No cookies available for this option.'}), 404
 
     # Ambil ID cookie yang sudah pernah di-claim user ini (untuk service ini)
     from sqlalchemy import select as sa_select, func
@@ -347,7 +346,7 @@ def api_country_data(country_code):
     ).order_by(CookieResult.checked_at.desc()).first()
 
     if not cookie:
-        return jsonify({'error': 'Tidak ada cookies baru tersedia untuk pilihan ini (semua akun sudah Anda klaim atau mencapai batas maksimal 2 user secara global).'}), 404
+        return jsonify({'error': 'No new cookies available for this option (you have claimed all accounts or they have reached the maximum limit of 2 users globally).'}), 404
 
     # Catat claim ini agar user tidak dapat cookie yang sama di generate berikutnya
     try:

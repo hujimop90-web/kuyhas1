@@ -10,7 +10,7 @@
     <p class="page-subtitle">
       {{ plan_meta.desc }}
       &mdash;
-      {% if show_flag %}Pilih negara untuk generate token{% else %}Pilih region untuk akses{% endif %}
+      {% if show_flag %}Select a country to generate a token{% else %}Select a region for access{% endif %}
     </p>
   </div>
   <a href="{{ url_for('user.dashboard', service=current_service) }}" class="btn btn-secondary btn-sm">
@@ -21,7 +21,7 @@
 
 {% if countries %}
 <div class="section-label">
-  {% if show_flag %}Negara Tersedia{% else %}Region Tersedia{% endif %}
+  {% if show_flag %}Available Countries{% else %}Available Regions{% endif %}
 </div>
 <div class="grid-auto">
   {% for c in countries %}
@@ -34,7 +34,7 @@
       <div style="font-size:26px;margin-bottom:8px;opacity:0.55;">🌐</div>
       <div class="code">{{ c.name }}</div>
     {% endif %}
-    <div class="count" style="color:var(--text-muted);font-weight:500;">Pilih →</div>
+    <div class="count" style="color:var(--text-muted);font-weight:500;">Select →</div>
   </a>
   {% endfor %}
 </div>
@@ -43,9 +43,9 @@
 <div class="card" style="text-align:center;padding:70px 20px;">
   <div style="font-size:52px;margin-bottom:16px;">📭</div>
   <p style="color:var(--text-muted);font-size:15px;margin-bottom:16px;">
-    Tidak ada akun tersedia untuk plan ini.
+    No accounts available for this plan.
   </p>
-  <a href="{{ url_for('user.dashboard', service=current_service) }}" class="btn btn-primary">← Kembali</a>
+  <a href="{{ url_for('user.dashboard', service=current_service) }}" class="btn btn-primary">← Go Back</a>
 </div>
 {% endif %}
 
