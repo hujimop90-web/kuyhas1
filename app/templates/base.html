@@ -118,13 +118,18 @@
       <a href="{{ url_for('admin.users') }}" class="nav-link">👥 Users</a>
       <a href="{{ url_for('user.dashboard') }}" class="nav-link">🏠 User View</a>
     {% else %}
-      <a href="{{ url_for('user.dashboard', service='netflix') }}" class="nav-link">🔴 Netflix</a>
-      <a href="{{ url_for('user.dashboard', service='primevideo') }}" class="nav-link">🔵 Prime Video</a>
-      <a href="{{ url_for('user.dashboard', service='spotify') }}" class="nav-link">🟢 Spotify</a>
-      <a href="{{ url_for('user.dashboard', service='udemy') }}" class="nav-link">🎓 Udemy</a>
-      <a href="{{ url_for('user.dashboard', service='crunchyroll') }}" class="nav-link">🟠 Crunchyroll</a>
-      <a href="{{ url_for('user.dashboard', service='claude') }}" class="nav-link">🎨 Claude</a>
-      <a href="{{ url_for('user.dashboard', service='gog') }}" class="nav-link">⚙️ GOG.com</a>
+      {% set svc_list = [
+        ('netflix', '🔴 Netflix'),
+        ('primevideo', '🔵 Prime Video'),
+        ('spotify', '🟢 Spotify'),
+        ('udemy', '🎓 Udemy'),
+        ('crunchyroll', '🟠 Crunchyroll'),
+        ('claude', '🎨 Claude'),
+        ('gog', '⚙️ GOG.com')
+      ] %}
+      {% for s_key, s_label in svc_list %}
+      <a href="{{ url_for('user.dashboard', service=s_key) }}" class="nav-link">{{ s_label }}</a>
+      {% endfor %}
     {% endif %}
     <div style="height:1px;background:rgba(255,255,255,0.08);margin:8px 0;"></div>
     <a href="{{ url_for('auth.logout') }}" class="nav-link" style="color:#f87171;">🚪 Logout</a>

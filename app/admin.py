@@ -194,43 +194,40 @@ def _run_check_background(flask_app, my_job_id, service_type, file_contents, pro
 
         # ── Simpan ke database (dalam app_context) ──
         saved = 0
-        try:
-            for fname, result in db_results:
-                try:
-                    entry = CookieResult(
-                        service_type=sanitize(service_type),
-                        filename=sanitize(fname),
-                        cookie_text=sanitize(result.get('cookie_text', '')),
-                        plan_key=sanitize(result.get('plan_key', 'unknown')),
-                        plan_name=sanitize(result.get('plan_name', 'Unknown')),
-                        country=sanitize(result.get('country', 'Unknown')),
-                        is_on_hold=bool(result.get('is_on_hold', False)),
-                        email=sanitize(result.get('email')),
-                        account_name=sanitize(result.get('account_name')),
-                        quality=sanitize(result.get('quality')),
-                        max_streams=sanitize(result.get('max_streams')),
-                        plan_price=sanitize(result.get('plan_price')),
-                        next_billing=sanitize(result.get('next_billing')),
-                        payment_method=sanitize(result.get('payment_method')),
-                        member_since=sanitize(result.get('member_since')),
-                        extra_members=sanitize(result.get('extra_members')),
-                        profiles=sanitize(result.get('profiles')),
-                        hold_status=sanitize(result.get('hold_status')),
-                        membership_status=sanitize(result.get('membership_status')),
-                        source_file=sanitize(fname),
-                        checked_at=datetime.utcnow(),
-                    )
-                    db.session.add(entry)
-                    saved += 1
-                except Exception as e:
-                    print(f"[DB ERROR] Gagal tambah entry {fname}: {e}")
-                    continue
+        for fname, result in db_results:
+            try:
+                entry = CookieResult(
+                    service_type=sanitize(service_type),
+                    filename=sanitize(fname),
+                    cookie_text=sanitize(result.get('cookie_text', '')),
+                    plan_key=sanitize(result.get('plan_key', 'unknown')),
+                    plan_name=sanitize(result.get('plan_name', 'Unknown')),
+                    country=sanitize(result.get('country', 'Unknown')),
+                    is_on_hold=bool(result.get('is_on_hold', False)),
+                    email=sanitize(result.get('email')),
+                    account_name=sanitize(result.get('account_name')),
+                    quality=sanitize(result.get('quality')),
+                    max_streams=sanitize(result.get('max_streams')),
+                    plan_price=sanitize(result.get('plan_price')),
+                    next_billing=sanitize(result.get('next_billing')),
+                    payment_method=sanitize(result.get('payment_method')),
+                    member_since=sanitize(result.get('member_since')),
+                    extra_members=sanitize(result.get('extra_members')),
+                    profiles=sanitize(result.get('profiles')),
+                    hold_status=sanitize(result.get('hold_status')),
+                    membership_status=sanitize(result.get('membership_status')),
+                    source_file=sanitize(fname),
+                    checked_at=datetime.utcnow(),
+                )
+                db.session.add(entry)
+                db.session.commit()
+                saved += 1
+            except Exception as e:
+                db.session.rollback()
+                print(f"[DB ERROR] Gagal tambah entry {fname}: {e}")
+                continue
 
-            db.session.commit()
-            print(f"[DB] Berhasil simpan {saved} cookies ke database.")
-        except Exception as e:
-            db.session.rollback()
-            print(f"[DB ERROR] Commit gagal: {e}\n{traceback.format_exc()}")
+        print(f"[DB] Berhasil simpan {saved} cookies ke database.")
 
         if current_job_id == my_job_id and not is_cancelled():
             progress_queue.put(json.dumps({
@@ -244,9 +241,12 @@ def _run_check_background(flask_app, my_job_id, service_type, file_contents, pro
                 'status': 'done',
             }))
 
-def _run_recheck_background(flask_app, my_job_id):
+def _run_recheck_background(flask_app, my_job_id, service_filter=None):
     with flask_app.app_context():
-        cookies = CookieResult.query.all()
+        query = CookieResult.query
+        if service_filter:
+            query = query.filter(CookieResult.service_type == service_filter)
+        cookies = query.all()
         results = {'done': 0, 'total': len(cookies), 'success': 0, 'failed': 0, 'error': 0, 'deleted': 0}
         task_q = queue.Queue()
         for c in cookies:
@@ -311,10 +311,12 @@ def _run_recheck_background(flask_app, my_job_id):
                                     cookie.is_on_hold = bool(res.get('is_on_hold', cookie.is_on_hold))
                                     cookie.email = sanitize(res.get('email') or cookie.email)
                                     cookie.checked_at = datetime.utcnow()
-                                else:
+                                elif status == 'failed':
                                     results['failed'] += 1
                                     results['deleted'] += 1
                                     db.session.delete(cookie)
+                                else:
+                                    results['error'] += 1
                                 db.session.commit()
                         except Exception as e:
                             db.session.rollback()
@@ -371,6 +373,13 @@ def dashboard():
         func.count(CookieResult.id).desc()
     ).limit(15).all()
 
+    service_stats = db.session.query(
+        CookieResult.service_type,
+        func.count(CookieResult.id).label('count')
+    ).group_by(CookieResult.service_type).order_by(
+        func.count(CookieResult.id).desc()
+    ).all()
+
     pending_users = User.query.filter_by(is_approved=False, is_admin=False).count()
     total_users = User.query.filter_by(is_admin=False).count()
 
@@ -378,6 +387,7 @@ def dashboard():
                            total=total,
                            plan_stats=plan_stats,
                            country_stats=country_stats,
+                           service_stats=service_stats,
                            pending_users=pending_users,
                            total_users=total_users)
 
@@ -702,6 +712,7 @@ def api_duplicate_stats():
 @login_required
 @admin_required
 def recheck_all():
+    service_filter = request.args.get('service', '')
     # Kosongkan queue lama
     while not progress_queue.empty():
         try:
@@ -717,14 +728,18 @@ def recheck_all():
     flask_app = current_app._get_current_object()
     reset_checker_state()
 
-    total = CookieResult.query.count()
+    query = CookieResult.query
+    if service_filter:
+        query = query.filter(CookieResult.service_type == service_filter)
+        
+    total = query.count()
     if total == 0:
         flash('No cookies to check.', 'warning')
         return redirect(url_for('admin.results'))
 
     t = threading.Thread(
         target=_run_recheck_background,
-        args=(flask_app, my_job_id),
+        args=(flask_app, my_job_id, service_filter),
         daemon=True
     )
     t.start()

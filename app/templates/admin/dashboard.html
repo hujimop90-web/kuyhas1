@@ -38,7 +38,30 @@
   </div>
 </div>
 
-<div class="grid-2">
+<div class="grid-2" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+  <!-- Service breakdown -->
+  <div class="card">
+    <div class="card-title">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+      Breakdown per Service
+    </div>
+    {% set svc_colors = {'netflix':'#e50914','spotify':'#1db954','crunchyroll':'#f47521','udemy':'#a435f0','gog':'#c0369c','claude':'#d97757','primevideo':'#00a8e1'} %}
+    {% for row in service_stats %}
+    <div style="margin-bottom:14px;">
+      <div class="flex-between mb-1">
+        <span style="font-size:13px;font-weight:600;color:var(--text);text-transform:uppercase;">
+          {{ row.service_type }}
+        </span>
+        <span style="font-size:13px;font-weight:800;color:{{ svc_colors.get(row.service_type,'#3b82f6') }};">{{ row.count }}</span>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-bar" style="width:{{ [row.count * 100 // [total,1]|max, 100]|min }}%;background:{{ svc_colors.get(row.service_type,'#3b82f6') }};"></div>
+      </div>
+    </div>
+    {% else %}
+    <p class="text-muted" style="font-size:13px;">No services data available.</p>
+    {% endfor %}
+  </div>
   <!-- Plan breakdown -->
   <div class="card">
     <div class="card-title">

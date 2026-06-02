@@ -117,6 +117,23 @@ def create_app():
                 except Exception:
                     db.session.rollback()
 
+    @app.context_processor
+    def inject_global_vars():
+        from flask_login import current_user
+        if current_user.is_authenticated and not getattr(current_user, 'is_admin', False):
+            from .models import CookieResult
+            from sqlalchemy import func
+            try:
+                counts = db.session.query(
+                    CookieResult.service_type, 
+                    func.count(CookieResult.id)
+                ).group_by(CookieResult.service_type).all()
+                svc_counts = {r[0]: r[1] for r in counts}
+            except Exception:
+                svc_counts = {}
+            return dict(svc_counts=svc_counts)
+        return dict(svc_counts={})
+
     @app.route('/')
     def index():
         return redirect(url_for('auth.login'))

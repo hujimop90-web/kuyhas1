@@ -18,8 +18,8 @@
             onclick="openDedupModal()">
       🧹 Delete Duplicates
     </button>
-    <form method="POST" action="{{ url_for('admin.recheck_all') }}" onsubmit="return confirm('Recheck all cookies? Invalid/expired cookies will be deleted.')">
-      <button class="btn btn-sm" style="background:#f59e0b;color:#000;border:none;">🔄 Recheck</button>
+    <form method="POST" action="{{ url_for('admin.recheck_all', service=service_filter) }}" onsubmit="return confirm('Recheck {% if service_filter %}{{ service_filter|upper }}{% else %}ALL{% endif %} cookies? Invalid/expired cookies will be deleted.')">
+      <button class="btn btn-sm" style="background:#f59e0b;color:#000;border:none;">🔄 Recheck {% if service_filter %}{{ service_filter|upper }}{% else %}All{% endif %}</button>
     </form>
     <form method="POST" action="{{ url_for('admin.delete_all') }}" onsubmit="return confirm('⚠️ Delete ALL cookies from the database? This action cannot be undone!')">
       <button class="btn btn-danger btn-sm">🧨 Delete All</button>

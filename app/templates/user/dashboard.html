@@ -21,6 +21,7 @@
       <span style="width:8px;height:8px;border-radius:50%;background:{{ svc_color }};display:inline-block;flex-shrink:0;"></span>
       {% set service_names = {'netflix':'Netflix','primevideo':'Prime Video','spotify':'Spotify','udemy':'Udemy','crunchyroll':'Crunchyroll','claude':'Claude','gog':'GOG.com'} %}
       <strong style="color:{{ svc_color }};">{{ service_names.get(current_service, current_service|title) }}</strong>
+      <span class="badge" style="margin-left:8px; background:rgba(255,255,255,0.05); color:var(--text-muted); font-weight:600;">{{ total }} Accounts Available</span>
     </p>
   </div>
 </div>
@@ -56,6 +57,9 @@
     <div class="plan-icon">{{ p.icon }}</div>
     <div class="plan-name">{{ p.label }}</div>
     <div class="plan-desc">{{ p.desc }}</div>
+    <div style="margin-top:12px; font-size:12px; font-weight:700; color:var(--text-muted);">
+      <span style="color:{{ p.color }};">{{ p.count }}</span> Accounts
+    </div>
   </a>
   {% else %}
   <div class="empty-state">
@@ -74,7 +78,7 @@
      class="country-card">
     <div class="flag">{{ c.flag }}</div>
     <div class="code">{{ c.name }}</div>
-    <div class="count" style="color:var(--text-muted);font-weight:500;">Select →</div>
+    <div class="count" style="color:var(--text-muted);font-weight:700;font-size:14px;"><span style="color:var(--text);">{{ c.count }}</span> Accounts</div>
   </a>
   {% else %}
   <div class="empty-state">
@@ -96,7 +100,7 @@
     {# Tidak tampilkan bendera besar untuk layanan global #}
     <div style="font-size:28px;margin-bottom:8px;opacity:0.6;">🌐</div>
     <div class="code">{{ c.name }}</div>
-    <div class="count" style="color:var(--text-muted);font-weight:500;">Select →</div>
+    <div class="count" style="color:var(--text-muted);font-weight:700;font-size:14px;"><span style="color:var(--text);">{{ c.count }}</span> Accounts</div>
   </a>
   {% endfor %}
 </div>

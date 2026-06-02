@@ -322,7 +322,7 @@ def api_country_data(country_code):
     if plan_filter:
         base_query = base_query.filter(CookieResult.plan_key == plan_filter)
 
-    if total == 0:
+    if base_query.count() == 0:
         return jsonify({'error': 'No cookies available for this option.'}), 404
 
     # Ambil ID cookie yang sudah pernah di-claim user ini (untuk service ini)
